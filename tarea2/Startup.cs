@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Persistence;
 using Service;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace tarea2
 {
@@ -32,11 +33,20 @@ namespace tarea2
             services.AddDbContext<StudentDbContext>(options => options.UseSqlServer(connection));
             services.AddTransient<IStudentService, StudentService>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v2", new Info { Title = "My API", Version = "v2" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseSwagger();
+            app.UseSwaggerUI(C =>
+            {
+                C.SwaggerEndpoint("/swagger/v2/swagger.json", "My API V1");
+            });
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
